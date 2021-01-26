@@ -70,6 +70,7 @@ def run(input, algorithm, delay):
         print("Pass a search algorithm to run program.")
 
     G, pos, color_map=initialize(flow_matrix, edge_color=path_color, node_color=path_node_color)
+    update(G, pos, color_map)
     while True:
         quit_event()
     

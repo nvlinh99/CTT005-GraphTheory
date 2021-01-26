@@ -9,73 +9,72 @@ import matplotlib.backends.backend_agg as agg
 
 
 def initialize(matrix, edge_color='black', node_color=default_color):
-		'''Parameters
-		-----------------------
-				 matrix: a numpy array stored adjacency matrix.
-		-----------------------
-		Return: 
-				G: networkX graph.
-				pos: vertice positions.
-				color_map: map color of each node.
-		'''
+    '''Parameters
+    -----------------------
+         matrix: a numpy array stored adjacency matrix.
+    -----------------------
+    Return: 
+        G: networkX graph.
+        pos: vertice positions.
+        color_map: map color of each node.
+    '''
+    n_vertices=matrix.shape[0]
+    
+    G=nx.DiGraph()
+    for row in range(n_vertices):
+        for col in range(n_vertices):
+            w=matrix[row][col]
+            if w!=0: G.add_edge(row, col, color=edge_color, weight=matrix[row][col])
 
-		n_vertices=matrix.shape[0]
+    pos = nx.spring_layout(G)  # positions for all nodes
+    
+    color_map={node: node_color for node in G.nodes}#change color 
 
-		G=nx.DiGraph()
-		for row in range(n_vertices):
-				for col in range(n_vertices):
-						w=matrix[row][col]
-						if w!=0: G.add_edge(row, col, color=edge_color, weight=matrix[row][col])
-
-		pos = nx.spring_layout(G)  # positions for all nodes
-		
-		color_map={node: node_color for node in G.nodes}#change color 
-
-		return G, pos, color_map
-		
-		
+    return G, pos, color_map
+    
+    
 
 def generateFigure(G, pos, color_map):
-		
-		fig=plt.figure(figsize=(10.24, 7.68), dpi=100)
-	
-		nx.draw_networkx_nodes(G, pos, node_color=list(color_map.values()),node_size=800)
+    
+    fig=plt.figure(figsize=(10.24, 7.68), dpi=100)
+  
+    nx.draw_networkx_nodes(G, pos, node_color=list(color_map.values()),node_size=800)
 
-		# edges
-		edges = G.edges()
+    # edges
+    edges = G.edges()
 
-		colors = [G[u][v]['color'] for u,v in edges]
-		nx.draw_networkx_edges(G, pos, edgelist=G.edges, edge_color =colors, arrowstyle="->",arrowsize=20, width=2)
+    colors = [G[u][v]['color'] for u,v in edges]
+    nx.draw_networkx_edges(G, pos, edgelist=G.edges, edge_color =colors, arrowstyle="->",arrowsize=20, width=2)
 
-		# labels
-		labels = nx.get_edge_attributes(G,'weight')
-		nx.draw_networkx_labels(G,pos, font_size=20, font_family="sans-serif")
-		nx.draw_networkx_edge_labels(G,pos, edge_labels=labels, font_size=12, font_family="sans-serif")
-		plt.axis("off")
-		
-		return fig
+    # labels
+    labels = nx.get_edge_attributes(G,'weight')
+    nx.draw_networkx_labels(G,pos, font_size=20, font_family="sans-serif")
+    nx.draw_networkx_edge_labels(G,pos, edge_labels=labels, font_size=12, font_family="sans-serif")
+    plt.axis("off")
+    
+    return fig
 
 def getRawData(fig):
-		canvas = agg.FigureCanvasAgg(fig)
-		canvas.draw()
-		renderer = canvas.get_renderer()
-		raw_data = renderer.tostring_rgb()
-		size = canvas.get_width_height()
-		return raw_data, size
+    canvas = agg.FigureCanvasAgg(fig)
+    canvas.draw()
+    renderer = canvas.get_renderer()
+    raw_data = renderer.tostring_rgb()
+    size = canvas.get_width_height()
+    return raw_data, size
 
 def readMatrix(input):
-		with open(input,'rt') as f:
-				l=0
-				matrix=[]
-				for line in f:
-						if l==0:
-								tmp=line.split()
-								s = int(tmp[0])
-								t = int(tmp[1])
-						else:
-								matrix.append(line.split())
-						l+=1
-				
-		matrix=np.array(matrix).astype(int)
+    with open(input,'rt') as f:
+        l=0
+        matrix=[]
+        for line in f:
+            if l==0:
+                tmp=line.split()
+                s = int(tmp[0])
+                t = int(tmp[1])
+            else:
+                matrix.append(line.split())
+            l+=1
+        
+    matrix=np.array(matrix).astype(int)
 
-		return matrix, s, t
+    return matrix, s, t

@@ -1,5 +1,5 @@
 import numpy as np
-from collections import deque
+from collections import deque		
 
 def BFS(matrix, flowMatrix, s, t):
 	#TODO
@@ -51,6 +51,11 @@ def FordFulkerson(matrix, s, t):
 				flow_matrix[v][u] -= flow
 			pathFlow = BFS(matrix, flow_matrix, s, t)
 		
+		for i in range(len(flow_matrix)):
+			for j in range(len(flow_matrix)):
+				if flow_matrix[i][j] < 0:
+					flow_matrix[i][j] = 0
+			
 		max_flow = sum(flow_matrix[s][i] for i in range(n))
 		flow_matrix = np.array(flow_matrix)
 
